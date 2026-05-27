@@ -1,9 +1,16 @@
 package com.example.blogpessoal.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
@@ -17,6 +24,10 @@ public class Tema {
 
 	@NotBlank(message = "O atributo descricão é obrigatório!")
 	private String descricao;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tema", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = "tema", allowSetters = true)
+	private List<Postagem> postagem;
 
 	public long getId() {
 		return id;
@@ -32,6 +43,14 @@ public class Tema {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public List<Postagem> getPostagem() {
+		return postagem;
+	}
+
+	public void setPostagem(List<Postagem> postagem) {
+		this.postagem = postagem;
 	}
 
 }
