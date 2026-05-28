@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.blogpessoal.model.Postagem;
 import com.example.blogpessoal.repository.PostagemRepository;
+import com.example.blogpessoal.repository.TemaRepository;
 
 import jakarta.validation.Valid;
 
@@ -30,6 +31,9 @@ public class PostagemController {
 
 	@Autowired
 	private PostagemRepository postagemRepository;
+
+	@Autowired
+	private TemaRepository temaRepository;
 
 	@GetMapping
 	public ResponseEntity<List<Postagem>> getAll() {
@@ -49,17 +53,25 @@ public class PostagemController {
 
 	@PostMapping
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
-		postagem.setId(null);
-		return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+		if (temaRepository.existsById(postagem.getTema().getId())) {
+			postagem.setId(null);
+			return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+
+		}
+
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe", null);
 	}
 
 	@PutMapping
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
+		if (postagemRepository.existsById(postagem.getId())) {
+			if (temaRepository.existsById(postagem.getTema().getId())) {
+				return ResponseEntity.ok().body(postagemRepository.save(postagem));
+			}
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe", null);
+		}
 
-		return postagemRepository.findById(postagem.getId())
-				.map(resposta -> ResponseEntity.ok(postagemRepository.save(postagem)))
-
-				.orElse(ResponseEntity.notFound().build());
+		return ResponseEntity.notFound().build();
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
