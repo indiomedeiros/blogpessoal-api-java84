@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
 	private static final String[] PUBLIC_ENDPOINTS = { "/usuarios/logar", "/usuarios/cadastrar", "/error/**", "/",
-			"/docs", "/swagger-ui/**", "/v3/api-docs-/**", "/swagger-resources/**" };
+			"/docs", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**" };
 
 	@Autowired
 	private JwtAuthFilter jwtAuthFilter;
