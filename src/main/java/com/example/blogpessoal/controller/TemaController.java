@@ -48,6 +48,12 @@ public class TemaController {
 
 	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<Tema> getById(@PathVariable Long id) {
+		return temaRepository.findById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+	}
+
 	@PostMapping
 	public ResponseEntity<Tema> create(@Valid @RequestBody Tema tema) {
 		tema.setId(null);
